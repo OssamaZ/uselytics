@@ -3,5 +3,9 @@
 version = 3
 
 [[package]]
-name = "uselytics"
+name = "ingest"
+version = "0.1.0"
+
+[[package]]
+name = "models"
 version = "0.1.0"
