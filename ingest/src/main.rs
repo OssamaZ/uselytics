@@ -1,9 +1,19 @@
+mod config;
+
 use axum::{routing::get, Router};
+use clap::Parser;
+use config::Config;
 
 #[tokio::main]
 async fn main() {
+  dotenvy::dotenv().ok();
+  let config = Config::parse();
+  println!("{config:?}");
+
   let router = Router::new().route("/", get(handler));
-  let listener = tokio::net::TcpListener::bind("0.0.0.0:3003").await.unwrap();
+  let listener = tokio::net::TcpListener::bind(("0.0.0.0", config.port))
+    .await
+    .unwrap();
   println!("listening on {}", listener.local_addr().unwrap());
   axum::serve(listener, router).await.unwrap();
 }
