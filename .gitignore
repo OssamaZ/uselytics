@@ -1,3 +1,6 @@
+# maxmind db
+geo.mmdb
+
 # rust
 /target
 
