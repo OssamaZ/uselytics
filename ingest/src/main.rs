@@ -6,10 +6,12 @@ use axum_extra::{headers::UserAgent, TypedHeader};
 use clap::Parser;
 use config::Config;
 use serde::Serialize;
+use sqlx::postgres::PgPoolOptions;
 use std::{net::SocketAddr, sync::Arc};
 use uaparser_rs::{Client, UAParser};
 
 struct AppState {
+  db_pool: sqlx::PgPool,
   uaparser: UAParser,
   iplookup: maxminddb::Reader<Vec<u8>>,
 }
@@ -20,6 +22,12 @@ async fn main() {
   let config = Config::parse();
   println!("{config:?}");
 
+  // database
+  let pool = PgPoolOptions::new()
+    .max_connections(25)
+    .connect(&config.database_url)
+    .await
+    .expect("Unable to connect to the database.");
   // uaparser
   let uap = UAParser::from_yaml("./regexes.yaml").expect("Unable to read ua parser regexes.");
   // geolookup
@@ -27,6 +35,7 @@ async fn main() {
 
   // state
   let shared_state = Arc::new(AppState {
+    db_pool: pool,
     uaparser: uap,
     iplookup: mm,
   });
@@ -53,6 +62,7 @@ struct UAResponse {
   client: UAResponseClient,
   ip: String,
   geo: Option<GeoResponseClient>,
+  result: String,
 }
 
 #[derive(Serialize)]
@@ -84,6 +94,13 @@ async fn handler(
   TypedHeader(ua): TypedHeader<UserAgent>,
   State(s): State<Arc<AppState>>,
 ) -> Json<UAResponse> {
+  let result = sqlx::query!("select 1 + 1 as result")
+    .fetch_one(&s.db_pool)
+    .await;
+  let result = result.map_or("Down".to_owned(), |r| {
+    r.result.map_or("Hmm".into(), |v| format!("{v}"))
+  });
+
   let Client {
     os,
     user_agent,
@@ -192,5 +209,6 @@ async fn handler(
     },
     ip: ip.to_string(),
     geo: geo,
+    result,
   })
 }
