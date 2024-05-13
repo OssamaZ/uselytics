@@ -4,7 +4,7 @@
  */
 await import("./src/env.js");
 
-/** @type {import("next").NextConfig} */
-const config = {};
+/** @type {import('next').NextConfig} */
+const nextConfig = {};
 
-export default config;
+export default nextConfig;
