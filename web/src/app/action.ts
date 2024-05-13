@@ -1,6 +1,5 @@
 "use server";
 
-import { LoopsClient } from "loops";
 import { env } from "@/env";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
@@ -8,8 +7,6 @@ import { revalidatePath } from "next/cache";
 const schema = z.object({
   email: z.string().email(),
 });
-
-const loops = new LoopsClient(env.LOOPS_API_KEY);
 
 export async function SignupForWaitlist(
   prevState: { message: string },
@@ -21,10 +18,7 @@ export async function SignupForWaitlist(
 
   if (parsed.success) {
     try {
-      const data = await loops.updateContact(parsed.data.email, {
-        uselytics: true,
-      });
-      console.log(data);
+      console.log({ parsed });
       revalidatePath("/");
       return {
         message: "🎉 You're successfully added to the waitlist!",
