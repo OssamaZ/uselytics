@@ -3,6 +3,7 @@ import { auth, signIn } from "@/lib/auth";
 
 export default async function Dashboard() {
   const session = await auth();
+  console.log(session);
   if (!session)
     return (
       <div>
