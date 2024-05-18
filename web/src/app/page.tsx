@@ -1,7 +1,14 @@
 import Link from "next/link";
 import WaitlistForm from "./waitlist-form";
+import { db } from "@/lib/db";
 
-export default function Home() {
+async function test_prisma() {
+  const userCount = await db.user.count();
+  return userCount;
+}
+
+export default async function Home() {
+  const userCount = await test_prisma();
   return (
     <main className="min-h-screen w-full">
       <header className="mx-auto flex items-center px-5 py-10 md:max-w-2xl md:px-0 xl:max-w-4xl">
@@ -62,6 +69,7 @@ export default function Home() {
           </p>
         </div>
         <WaitlistForm />
+        <p className="mt-3">User count: {userCount}</p>
       </div>
     </main>
   );
