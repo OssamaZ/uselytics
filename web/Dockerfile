@@ -30,7 +30,12 @@ COPY components.json .
 # ARG ENV_VARIABLE
 # ENV ENV_VARIABLE=${ENV_VARIABLE}
 
-# TODO: ENV when building ??
+# TODO: ??
+ARG DATABASE_URL
+ARG AUTH_SECRET
+ARG AUTH_GOOGLE_ID
+ARG AUTH_GOOGLE_SECRET
+
 # RUN npx prisma migrate deploy
 
 # Next.js collects completely anonymous telemetry data about general usage. Learn more here: https://nextjs.org/telemetry
