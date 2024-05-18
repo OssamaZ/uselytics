@@ -32,6 +32,9 @@ COPY components.json .
 
 # TODO:
 ARG DATABASE_URL
+ARG AUTH_SECRET
+ARG AUTH_GOOGLE_ID
+ARG AUTH_GOOGLE_SECRET
 RUN npx prisma migrate deploy
 
 # Next.js collects completely anonymous telemetry data about general usage. Learn more here: https://nextjs.org/telemetry
