@@ -34,7 +34,7 @@ export async function SignupForWaitlist(
         },
       });
       const _ = await resend.emails.send({
-        from: "Ossama <hi@uselytics.app>",
+        from: "Ossama <hello@uselytics.app>",
         to: [email],
         subject: "Welcome to Uselytics",
         react: WaitlistEmail({ email }),
