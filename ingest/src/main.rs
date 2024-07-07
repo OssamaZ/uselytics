@@ -1,11 +1,20 @@
 mod config;
+mod error;
+mod response;
 
-use axum::{extract::State, routing::get, Json, Router};
+use axum::{
+  extract::{Query, State},
+  routing::get,
+  Json, Router,
+};
 use axum_client_ip::{InsecureClientIp, SecureClientIpSource};
 use axum_extra::{headers::UserAgent, TypedHeader};
 use clap::Parser;
 use config::Config;
-use serde::Serialize;
+use error::{AppError, AppResult};
+use response::AppResponse;
+use serde::{Deserialize, Serialize};
+use serde_json::json;
 use sqlx::postgres::PgPoolOptions;
 use std::{net::SocketAddr, sync::Arc};
 use uaparser_rs::{Client, UAParser};
@@ -41,6 +50,8 @@ async fn main() {
   });
 
   let router = Router::new()
+    .route("/status", get(|| async { "up" }))
+    .route("/t", get(testH))
     .route("/", get(handler))
     .with_state(shared_state)
     .layer(SecureClientIpSource::ConnectInfo.into_extension());
@@ -211,4 +222,22 @@ async fn handler(
     geo: geo,
     result,
   })
+}
+
+#[derive(Deserialize)]
+struct testHQ {
+  e: Option<usize>,
+}
+
+async fn testH(Query(q): Query<testHQ>) -> AppResult {
+  let n = match q.e {
+    Some(n) if n >= 1 && n <= 3 => n,
+    _ => {
+      return Err(AppError::BadRequest(
+        "E must be a number between 1 and 3".to_string(),
+      ))
+    }
+  };
+
+  Ok(AppResponse(json!({ "val": n })))
 }

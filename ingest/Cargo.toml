@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+anyhow = "1.0.86"
 axum = "0.7.5"
 axum-client-ip = "0.6.0"
 axum-extra = { version = "0.9.3", features = ["typed-header"] }
@@ -13,5 +14,6 @@ maxminddb = "0.24.0"
 serde = { version = "1.0.198", features = ["derive"] }
 serde_json = "1.0.116"
 sqlx = { version = "0.7.4", features = ["postgres", "runtime-tokio"] }
+thiserror = "1.0.61"
 tokio = { version = "1.37.0", features = ["full"] }
 uaparser-rs = "0.1.0"
